@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat &middot; MindCare AI</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='logo.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ---- Sidebar ---- */
+        .sidebar {
+            width: 260px; min-width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .sidebar-header { padding: 1rem 0.75rem; border-bottom: 1px solid var(--border); }
+        .new-chat-btn {
+            width: 100%; padding: 0.6rem 0.8rem;
+            background: transparent; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-weight: 500;
+            cursor: pointer; font-size: 0.85rem; transition: all 0.15s;
+            font-family: 'Inter', sans-serif; text-align: left;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .new-chat-btn:hover { background: var(--bg-hover); }
+        .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); }
+        .sidebar-tab {
+            flex: 1; padding: 0.6rem 0.5rem; text-align: center;
+            font-size: 0.78rem; color: var(--text-dim); cursor: pointer;
+            border: none; background: none; transition: all 0.15s;
+            font-family: 'Inter', sans-serif; border-bottom: 2px solid transparent;
+        }
+        .sidebar-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+        .sidebar-tab:hover:not(.active) { color: var(--text-muted); }
+        .sidebar-content { flex: 1; overflow-y: auto; padding: 0.5rem; }
+        .sidebar-content::-webkit-scrollbar { width: 3px; }
+        .sidebar-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+        .session-item {
+            padding: 0.6rem 0.7rem; border-radius: 8px; cursor: pointer;
+            transition: all 0.1s; margin-bottom: 2px;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .session-item:hover, .session-item.active { background: var(--bg-hover); }
+        .session-icon { font-size: 0.9rem; flex-shrink: 0; opacity: 0.5; }
+        .session-info { flex: 1; overflow: hidden; }
+        .session-title {
+            font-size: 0.83rem; color: var(--text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .session-meta { font-size: 0.68rem; color: var(--text-dim); margin-top: 1px; }
+        .session-delete {
+            opacity: 0; border: none; background: none; color: var(--text-dim);
+            cursor: pointer; font-size: 0.85rem; padding: 4px; transition: opacity 0.1s;
+        }
+        .session-item:hover .session-delete { opacity: 0.6; }
+        .session-delete:hover { opacity: 1 !important; color: var(--danger); }
+        /* Dashboard cards */
+        .dash-card {
+            background: var(--bg-glass); border: 1px solid var(--border);
+            border-radius: 10px; padding: 0.7rem; margin-bottom: 0.5rem;
+        }
+        .dash-card h4 {
+            font-size: 0.7rem; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;
+        }
+        .dash-stat { font-size: 1.3rem; font-weight: 600; color: var(--accent); }
+        .dash-row { display: flex; gap: 0.4rem; }
+        .dash-row .dash-card { flex: 1; text-align: center; }
+        .dash-stat.danger { color: var(--danger); }
+        .dash-stat.warning { color: var(--warning); }
+        /* Profile footer */
+        .sidebar-profile {
+            padding: 0.75rem; border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .profile-avatar {
+            width: 32px; height: 32px; border-radius: 6px; background: #5b21b6;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.8rem; color: #e9d5ff; flex-shrink: 0;
+        }
+        .profile-info { flex: 1; overflow: hidden; }
+        .profile-name {
+            font-size: 0.82rem; font-weight: 500; color: var(--text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .profile-email {
+            font-size: 0.68rem; color: var(--text-dim);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .profile-logout {
+            background: none; border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.25rem 0.5rem; color: var(--text-dim); cursor: pointer;
+            font-size: 0.72rem; transition: all 0.15s; text-decoration: none;
+        }
+        .profile-logout:hover { border-color: var(--danger); color: var(--danger); }
+        .empty-state {
+            text-align: center; padding: 2rem 1rem;
+            color: var(--text-dim); font-size: 0.82rem;
+        }
+        .empty-state span { display: block; font-size: 1.5rem; margin-bottom: 0.4rem; }
+        @media (max-width: 768px) { .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="newChatBtn">&#10024; New chat</button>
+            </div>
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab active" data-tab="chats">&#128172; Chats</button>
+                <button class="sidebar-tab" data-tab="dashboard">&#128202; Dashboard</button>
+            </div>
+            <div class="sidebar-content" id="sidebarContent"></div>
+            <div class="sidebar-profile">
+                <div class="profile-avatar" id="profileAvatar"></div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName"></div>
+                    <div class="profile-email" id="profileEmail"></div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="profile-logout">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Chat -->
+        <main class="chat-main">
+            <div class="chat-header">
+                <div style="display:flex;align-items:center;gap:0.6rem;">
+                    <img src="{{ url_for('static', filename='logo.svg') }}" alt="MindCare AI" width="28" height="28">
+                    <div>
+                        <h1>MindCare AI</h1>
+                        <p class="subtitle">A safe space to share your thoughts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-footer">
+                <div class="input-container">
+                    <textarea id="userInput" placeholder="Tell me how you're feeling..." rows="1"></textarea>
+                    <button id="sendBtn" class="send-btn">&#10148;</button>
+                </div>
+                <p class="disclaimer">&#9888;&#65039; Not a crisis service. If you're in danger, call 988.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Server data passed from Flask -->
+    <div id="serverData" style="display:none"
+         data-username="{{ username }}"
+         data-session-id="{{ session_id|default(0) }}"
+         data-guardian-email="{{ guardian_email|default('') }}">
+    </div>
+
+    <script>
+        // -------------------------------------------------------
+        // Config from server
+        // -------------------------------------------------------
+        var dataEl = document.getElementById('serverData');
+        var CONFIG = {
+            username:     dataEl.getAttribute('data-username') || '',
+            sessionId:    parseInt(dataEl.getAttribute('data-session-id')) || 0,
+            guardianEmail: dataEl.getAttribute('data-guardian-email') || ''
+        };
+
+        var messagesDiv    = document.getElementById('chatMessages');
+        var input          = document.getElementById('userInput');
+        var sendBtn        = document.getElementById('sendBtn');
+        var sidebarContent = document.getElementById('sidebarContent');
+
+        var currentSessionId = CONFIG.sessionId;
+        var isSending        = false;
+        var activeTab        = 'chats';
+
+        // Profile area
+        document.getElementById('profileAvatar').textContent = CONFIG.username.charAt(0).toUpperCase();
+        document.getElementById('profileName').textContent   = CONFIG.username;
+        document.getElementById('profileEmail').textContent  = '🛡️ ' + CONFIG.guardianEmail;
+
+        // -------------------------------------------------------
+        // Sidebar tabs
+        // -------------------------------------------------------
+        document.querySelectorAll('.sidebar-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-tab').forEach(function(t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                activeTab = tab.getAttribute('data-tab');
+                if (activeTab === 'chats') { loadSessions(); } else { loadDashboard(); }
+            });
+        });
+
+        // -------------------------------------------------------
+        // Load chat sessions list in sidebar
+        // -------------------------------------------------------
+        function loadSessions() {
+            fetch('/sessions')
+                .then(function(res) { return res.json(); })
+                .then(function(sessions) {
+                    if (sessions.length === 0) {
+                        sidebarContent.innerHTML =
+                            '<div class="empty-state"><span>💬</span>No chats yet.<br>Start a conversation!</div>';
+                        return;
+                    }
+                    var html = '';
+                    sessions.forEach(function(s) {
+                        var cls = s.id === currentSessionId ? 'session-item active' : 'session-item';
+                        html += '<div class="' + cls + '" data-id="' + s.id + '">' +
+                            '<span class="session-icon">💬</span>' +
+                            '<div class="session-info">' +
+                            '<div class="session-title">' + escapeHtml(s.title) + '</div>' +
+                            '<div class="session-meta">' + s.msg_count + ' msgs &middot; ' + s.created_at + '</div>' +
+                            '</div>' +
+                            '<button class="session-delete" data-id="' + s.id + '" title="Delete">&times;</button>' +
+                            '</div>';
+                    });
+                    sidebarContent.innerHTML = html;
+                    bindSessionEvents();
+                });
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
+        function bindSessionEvents() {
+            sidebarContent.querySelectorAll('.session-item').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('session-delete')) return;
+                    var id = parseInt(el.getAttribute('data-id'));
+                    currentSessionId = id;
+                    loadHistory(id);
+                    loadSessions();
+                });
+            });
+            sidebarContent.querySelectorAll('.session-delete').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var id = parseInt(btn.getAttribute('data-id'));;
+                    fetch('/delete_session/' + id, { method: 'DELETE' })
+                        .then(function() {
+                            if (id === currentSessionId) {
+                                fetch('/new_session', { method: 'POST' })
+                                    .then(function(r) { return r.json(); })
+                                    .then(function(data) {
+                                        currentSessionId = data.session_id;
+                                        messagesDiv.innerHTML = '';
+                                        showWelcome();
+                                        loadSessions();
+                                    });
+                            } else {
+                                loadSessions();
+                            }
+                        });
+                });
+            });
+        }
+
+        // -------------------------------------------------------
+        // Load dashboard stats in sidebar
+        // -------------------------------------------------------
+        function loadDashboard() {
+            fetch('/dashboard_data')
+                .then(function(res) { return res.json(); })
+                .then(function(d) {
+                    sidebarContent.innerHTML =
+                        '<div class="dash-card"><h4>Total Messages</h4><div class="dash-stat">' + d.total_messages + '</div></div>' +
+                        '<div class="dash-card"><h4>Conversations</h4><div class="dash-stat">' + d.total_sessions + '</div></div>' +
+                        '<div class="dash-row">' +
+                            '<div class="dash-card"><h4>🟢 Low</h4><div class="dash-stat">' + d.low_risk + '</div></div>' +
+                            '<div class="dash-card"><h4>🟡 Med</h4><div class="dash-stat warning">' + d.medium_risk + '</div></div>' +
+                            '<div class="dash-card"><h4>🔴 High</h4><div class="dash-stat danger">' + d.high_risk + '</div></div>' +
+                        '</div>' +
+                        '<div class="dash-card"><h4>Guardian</h4><div style="color:var(--text-muted);font-size:0.82rem;">📧 ' +
+                        escapeHtml(d.guardian_email) + '</div></div>';
+                });
+        }
+
+        // -------------------------------------------------------
+        // New Chat button
+        // -------------------------------------------------------
+        document.getElementById('newChatBtn').addEventListener('click', function() {
+            fetch('/new_session', { method: 'POST' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    currentSessionId = data.session_id;
+                    messagesDiv.innerHTML = '';
+                    showWelcome();
+                    loadSessions();
+                });
+        });
+
+        // -------------------------------------------------------
+        // Greeting helper
+        // -------------------------------------------------------
+        function getGreeting() {
+            var h = new Date().getHours();
+            if (h < 12) return 'Good morning';
+            if (h < 17) return 'Good afternoon';
+            return 'Good evening';
+        }
+
+        // -------------------------------------------------------
+        // Welcome screen with mood chips
+        // -------------------------------------------------------
+        function showWelcome() {
+            var welcome = document.createElement('div');
+            welcome.className = 'welcome-section';
+            welcome.id = 'welcomeSection';
+
+            var chips = [
+                { msg: "I'm feeling really stressed today",    label: "😩 Stressed" },
+                { msg: "I'm feeling anxious and can't relax", label: "😰 Anxious" },
+                { msg: "I'm feeling sad and down today",       label: "😢 Sad" },
+                { msg: "I'm feeling lonely",                   label: "😔 Lonely" },
+                { msg: "I can't sleep, my mind won't stop",   label: "😴 Can't Sleep" },
+                { msg: "I'm feeling great today!",             label: "😊 Great" },
+                { msg: "I just want to talk to someone",       label: "💬 Talk" }
+            ];
+
+            var chipsHtml = '';
+            chips.forEach(function(c, i) {
+                chipsHtml += '<button class="mood-chip" data-idx="' + i + '">' + c.label + '</button>';
+            });
+
+            welcome.innerHTML =
+                '<div class="welcome-emoji">🌿</div>' +
+                '<h2>' + getGreeting() + ', ' + escapeHtml(CONFIG.username) + '! 👋</h2>' +
+                '<p>I\'m MindCare AI — your safe space to talk, vent, or just breathe.</p>' +
+                '<div class="mood-chips">' + chipsHtml + '</div>';
+
+            messagesDiv.appendChild(welcome);
+
+            welcome.querySelectorAll('.mood-chip').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var idx = parseInt(btn.getAttribute('data-idx'));
+                    input.value = chips[idx].msg;
+                    sendMessage();
+                });
+            });
+        }
+
+        // -------------------------------------------------------
+        // Create a message row (avatar + content area)
+        // -------------------------------------------------------
+        function createMessageRow(sender) {
+            var msgDiv = document.createElement('div');
+            msgDiv.className = 'message ' + sender;
+
+            var inner = document.createElement('div');
+            inner.className = 'message-inner';
+
+            var avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = sender === 'user' ? CONFIG.username.charAt(0).toUpperCase() : '🌿';
+
+            var content = document.createElement('div');
+            content.className = 'message-content';
+
+            var name = document.createElement('div');
+            name.className = 'sender-name';
+            name.textContent = sender === 'user' ? 'You' : 'MindCare AI';
+
+            content.appendChild(name);
+            inner.appendChild(avatar);
+            inner.appendChild(content);
+            msgDiv.appendChild(inner);
+
+            return { msgDiv: msgDiv, content: content };
+        }
+
+        // Smooth scroll to bottom of chat
+        function scrollToBottom() {
+            messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
+        }
+
+        // -------------------------------------------------------
+        // Load chat history from server (on session switch)
+        // -------------------------------------------------------
+        function loadHistory(sessionId) {
+            var sid = sessionId || currentSessionId;
+            fetch('/history/' + sid)
+                .then(function(res) { return res.json(); })
+                .then(function(history) {
+                    messagesDiv.innerHTML = '';
+                    if (history.length === 0) {
+                        showWelcome();
+                    } else {
+                        history.forEach(function(entry) {
+                            addMessage(entry.message, 'user', entry.timestamp);
+                            addBotMessageInstant(entry.response, entry.risk_level, entry.timestamp);
+                        });
+                        scrollToBottom();
+                    }
+                });
+        }
+
+        // -------------------------------------------------------
+        // Add user message bubble
+        // -------------------------------------------------------
+        function addMessage(text, sender, timestamp) {
+            var ws = document.getElementById('welcomeSection');
+            if (ws) ws.remove();
+
+            var row    = createMessageRow(sender);
+            var bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.textContent = text;
+
+            // Timestamp label (shown under bubble)
+            if (timestamp) {
+                var ts = document.createElement('div');
+                ts.className = 'msg-timestamp';
+                ts.textContent = timestamp;
+                row.content.appendChild(bubble);
+                row.content.appendChild(ts);
+            } else {
+                row.content.appendChild(bubble);
+            }
+
+            messagesDiv.appendChild(row.msgDiv);
+            scrollToBottom();
+        }
+
+        // -------------------------------------------------------
+        // Bot message — instant (used when loading history)
+        // -------------------------------------------------------
+        function addBotMessageInstant(text, riskLevel, timestamp) {
+            var row    = createMessageRow('bot');
+            var bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            if (riskLevel) bubble.classList.add(riskLevel.toLowerCase());
+
+            var textDiv = document.createElement('div');
+            textDiv.className = 'response-text';
+            textDiv.textContent = text;
+            bubble.appendChild(textDiv);
+            row.content.appendChild(bubble);
+
+            if (timestamp) {
+                var ts = document.createElement('div');
+                ts.className = 'msg-timestamp';
+                ts.textContent = timestamp;
+                row.content.appendChild(ts);
+            }
+
+            messagesDiv.appendChild(row.msgDiv);
+        }
+
+        // -------------------------------------------------------
+        // Typewriter effect — types text character by character
+        // Scrolls smoothly as text appears
+        // -------------------------------------------------------
+        function typewriterEffect(el, text, speed, callback) {
+            var i      = 0;
+            var cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function tick() {
+                if (i < text.length) {
+                    cursor.parentNode.insertBefore(document.createTextNode(text[i]), cursor);
+                    i++;
+                    // Auto-scroll during typing so user always sees latest text
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    setTimeout(tick, speed);
+                } else {
+                    cursor.remove();
+                    if (callback) callback();
+                }
+            }
+            tick();
+        }
+
+        // -------------------------------------------------------
+        // Bot message — animated (used for new incoming messages)
+        // Shows typewriter effect then reveals exercise tip
+        // -------------------------------------------------------
+        function addBotMessageAnimated(text, riskLevel, exercise, timestamp, callback) {
+            var row    = createMessageRow('bot');
+            var bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            if (riskLevel) bubble.classList.add(riskLevel.toLowerCase());
+
+            var textDiv = document.createElement('div');
+            textDiv.className = 'response-text';
+            bubble.appendChild(textDiv);
+            row.content.appendChild(bubble);
+
+            if (timestamp) {
+                var ts = document.createElement('div');
+                ts.className = 'msg-timestamp';
+                ts.textContent = timestamp;
+                row.content.appendChild(ts);
+            }
+
+            messagesDiv.appendChild(row.msgDiv);
+            scrollToBottom();
+
+            // Slight initial delay before typing starts (feels more natural)
+            setTimeout(function() {
+                typewriterEffect(textDiv, text, 18, function() {
+                    scrollToBottom();
+                    if (exercise) {
+                        // Exercise tip appears 300ms after typing finishes
+                        setTimeout(function() {
+                            var exDiv = document.createElement('div');
+                            exDiv.className = 'exercise-tip';
+                            exDiv.textContent = exercise;
+                            bubble.appendChild(exDiv);
+                            scrollToBottom();
+                            if (callback) callback();
+                        }, 300);
+                    } else {
+                        if (callback) callback();
+                    }
+                });
+            }, 100);
+        }
+
+        // -------------------------------------------------------
+        // Send message to server
+        // -------------------------------------------------------
+        function sendMessage() {
+            var message = input.value.trim();
+            if (!message || isSending) return;
+
+            isSending = true;
+            sendBtn.disabled = true;
+
+            addMessage(message, 'user', null);
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Show typing indicator (3 bouncing dots)
+            var typingRow = createMessageRow('bot');
+            typingRow.msgDiv.classList.add('typing');
+            var typingBubble = document.createElement('div');
+            typingBubble.className = 'bubble';
+            typingBubble.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+            typingRow.content.appendChild(typingBubble);
+            messagesDiv.appendChild(typingRow.msgDiv);
+            scrollToBottom();
+
+            var startTime = Date.now();
+
+            fetch('/send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message, session_id: currentSessionId })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                // Enforce minimum typing delay of 1.2s so the bot doesn't feel instant
+                var elapsed   = Date.now() - startTime;
+                var remaining = Math.max(0, 1200 - elapsed);
+
+                setTimeout(function() {
+                    typingRow.msgDiv.remove();
+                    if (data.session_id) currentSessionId = data.session_id;
+
+                    addBotMessageAnimated(
+                        data.response,
+                        data.risk,
+                        data.exercise,
+                        data.timestamp || null,
+                        function() {
+                            // Update session list after response fully renders
+                            loadSessions();
+                            isSending = false;
+                            sendBtn.disabled = false;
+                            input.focus();
+                        }
+                    );
+                }, remaining);
+            })
+            .catch(function() {
+                typingRow.msgDiv.remove();
+                addBotMessageInstant("Sorry, I'm having trouble right now. 💛", 'MEDIUM', null);
+                isSending = false;
+                sendBtn.disabled = false;
+            });
+        }
+
+        // -------------------------------------------------------
+        // Input textarea — auto-expand as user types
+        // -------------------------------------------------------
+        input.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        // Enter to send, Shift+Enter for new line
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        // -------------------------------------------------------
+        // Init — load history and sessions on page load
+        // -------------------------------------------------------
+        loadHistory(currentSessionId);
+        loadSessions();
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5ec9a0"/>
+      <stop offset="100%" style="stop-color:#4aaf88"/>
+    </linearGradient>
+  </defs>
+  <!-- Circle background -->
+  <circle cx="32" cy="32" r="30" fill="url(#g)" opacity="0.15"/>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="url(#g)" stroke-width="2"/>
+  <!-- Brain-leaf hybrid -->
+  <!-- Left brain half -->
+  <path d="M28 18 C20 18, 16 24, 16 30 C16 36, 20 42, 28 44 C28 42, 24 38, 24 34 C24 30, 26 26, 28 24" fill="none" stroke="#5ec9a0" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Right brain half -->
+  <path d="M36 18 C44 18, 48 24, 48 30 C48 36, 44 42, 36 44 C36 42, 40 38, 40 34 C40 30, 38 26, 36 24" fill="none" stroke="#5ec9a0" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Center stem / sprout -->
+  <path d="M32 20 L32 50" fill="none" stroke="#5ec9a0" stroke-width="2" stroke-linecap="round"/>
+  <!-- Leaves -->
+  <path d="M32 38 C28 34, 24 36, 24 38 C24 40, 28 42, 32 38Z" fill="#5ec9a0" opacity="0.6"/>
+  <path d="M32 32 C36 28, 40 30, 40 32 C40 34, 36 36, 32 32Z" fill="#5ec9a0" opacity="0.6"/>
+  <!-- Small heart at top -->
+  <path d="M30 22 C30 20, 32 19, 32 21 C32 19, 34 20, 34 22 C34 24, 32 25, 32 25 C32 25, 30 24, 30 22Z" fill="#5ec9a0"/>
+</svg>

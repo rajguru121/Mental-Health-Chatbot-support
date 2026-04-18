@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Alerts - MindCare AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .guardian-page {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .guardian-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .guardian-header h1 {
+            font-size: 1.8rem;
+            color: #2a4d3e;
+            font-weight: 600;
+        }
+
+        .guardian-header p {
+            color: #527a6a;
+            margin-top: 0.3rem;
+        }
+
+        .alert-info-box {
+            background: #fff3f0;
+            border: 1px solid #f0b8b0;
+            border-left: 5px solid #d95a4e;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-info-box h3 {
+            color: #a1332a;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-info-box p {
+            color: #6b3a35;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .alert-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 20, 10, 0.06);
+            border-left: 5px solid #d95a4e;
+        }
+
+        .alert-card .alert-time {
+            font-size: 0.8rem;
+            color: #7a9b8e;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-card .alert-message {
+            font-size: 1rem;
+            color: #1e2f2a;
+            background: #fef7f5;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .alert-card .alert-status {
+            font-size: 0.8rem;
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .alert-card .status-sent {
+            background: #e2f0e8;
+            color: #1e4d3a;
+        }
+
+        .alert-card .status-failed {
+            background: #ffe8e0;
+            color: #a1332a;
+        }
+
+        .no-alerts {
+            text-align: center;
+            padding: 3rem;
+            color: #7a9b8e;
+        }
+
+        .no-alerts h3 {
+            color: #4e9e7a;
+            margin-bottom: 0.5rem;
+        }
+
+        .crisis-box {
+            background: #e2eef5;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 2rem;
+            border-left: 5px solid #5a9ab5;
+        }
+
+        .crisis-box h3 {
+            color: #2a5f7a;
+            margin-bottom: 0.5rem;
+        }
+
+        .crisis-box p {
+            color: #3a6a85;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body class="auth-page">
+    <div class="guardian-page">
+        <div class="guardian-header">
+            <h1>Guardian Alert Dashboard</h1>
+            <p>Alerts for user: <strong>{{ username }}</strong></p>
+            <p>Guardian email: {{ guardian_email }}</p>
+        </div>
+
+        <div class="alert-info-box">
+            <h3>What is this page?</h3>
+            <p>
+                This page shows all HIGH RISK messages detected by the MindCare AI mental health chatbot
+                for user <strong>{{ username }}</strong>. When concerning messages are detected,
+                alerts are automatically saved here and emailed to you.
+                Please reach out to {{ username }} if you see any recent alerts.
+            </p>
+        </div>
+
+        {% if alerts %}
+        <h2 style="color: #2a4d3e; margin-bottom: 1rem;">{{ alerts|length }} Alert(s)</h2>
+
+        {% for alert in alerts %}
+        <div class="alert-card">
+            <div class="alert-time">
+                {{ alert.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+            </div>
+            <div class="alert-message">
+                "{{ alert.message }}"
+            </div>
+            <span class="alert-status {% if alert.email_sent %}status-sent{% else %}status-failed{% endif %}">
+                {% if alert.email_sent %}
+                Email sent successfully
+                {% else %}
+                Email not sent
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <div class="no-alerts">
+            <h3>No alerts yet</h3>
+            <p>No HIGH risk messages have been detected. This is good news!</p>
+        </div>
+        {% endif %}
+
+        <div class="crisis-box">
+            <h3>Crisis Resources</h3>
+            <p>
+                If you believe someone is in immediate danger:<br>
+                - <strong>Emergency Services: 911</strong><br>
+                - National Suicide Prevention Lifeline: <strong>988</strong><br>
+                - Crisis Text Line: Text <strong>HOME</strong> to <strong>741741</strong>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

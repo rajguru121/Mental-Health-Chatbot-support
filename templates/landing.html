@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare AI — Your Compassionate Mental Health Companion</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --teal: #3db88a;
+            --teal-light: #5ec9a0;
+            --teal-pale: #e6f7f0;
+            --teal-deep: #1d7a5a;
+            --cream: #faf9f6;
+            --warm: #f5f2ec;
+            --ink: #1a2420;
+            --muted: #5a7068;
+            --border: #daeee6;
+            --white: #ffffff;
+            --font-serif: 'Lora', Georgia, serif;
+            --font-sans: 'DM Sans', sans-serif;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--cream);
+            color: var(--ink);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 4rem;
+            background: rgba(250, 249, 246, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(61, 184, 138, 0.12);
+            animation: fadeDown 0.6s ease both;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-logo .dot {
+            color: var(--teal);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.88rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--teal-deep);
+        }
+
+        .btn-nav {
+            background: var(--teal);
+            color: #fff !important;
+            padding: 0.5rem 1.4rem;
+            border-radius: 50px;
+            font-size: 0.88rem !important;
+            font-weight: 500 !important;
+            transition: background 0.2s, transform 0.15s !important;
+        }
+
+        .btn-nav:hover {
+            background: var(--teal-deep) !important;
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 4rem;
+            padding: 8rem 4rem 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: -120px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(94, 201, 160, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(61, 184, 138, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--teal-deep);
+            background: var(--teal-pale);
+            border: 1px solid var(--border);
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.7s 0.1s ease both;
+        }
+
+        .hero-eyebrow .pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            animation: pulse 2s ease infinite;
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+            font-weight: 600;
+            line-height: 1.18;
+            color: var(--ink);
+            margin-bottom: 1.4rem;
+            animation: fadeUp 0.7s 0.2s ease both;
+        }
+
+        .hero h1 em {
+            color: var(--teal);
+            font-style: italic;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--muted);
+            max-width: 440px;
+            line-height: 1.75;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.7s 0.3s ease both;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            animation: fadeUp 0.7s 0.4s ease both;
+        }
+
+        .btn-primary {
+            background: var(--teal);
+            color: #fff;
+            padding: 0.85rem 2rem;
+            border-radius: 50px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 24px rgba(61, 184, 138, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--teal-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(61, 184, 138, 0.4);
+        }
+
+        .btn-ghost {
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .btn-ghost:hover {
+            color: var(--teal-deep);
+        }
+
+        .btn-ghost::after {
+            content: '→';
+            transition: transform 0.2s;
+        }
+
+        .btn-ghost:hover::after {
+            transform: translateX(3px);
+        }
+
+        /* ── CHAT MOCKUP ── */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeLeft 0.8s 0.3s ease both;
+        }
+
+        .chat-card {
+            background: var(--white);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 64px rgba(26, 36, 32, 0.1);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--teal);
+            color: #fff;
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .chat-header-info {
+            flex: 1;
+        }
+
+        .chat-header-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .chat-status {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #a8f0d0;
+            display: inline-block;
+        }
+
+        .chat-body {
+            padding: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 280px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 0.7rem 1rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.55;
+        }
+
+        .msg-bot {
+            background: var(--teal-pale);
+            color: var(--ink);
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            border: 1px solid var(--border);
+        }
+
+        .msg-user {
+            background: var(--teal);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+
+        .msg-time {
+            font-size: 0.68rem;
+            opacity: 0.55;
+            margin-top: 3px;
+            text-align: right;
+        }
+
+        .chat-input-bar {
+            border-top: 1px solid var(--border);
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input-mock {
+            flex: 1;
+            background: var(--warm);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.82rem;
+            color: #aaa;
+            border: 1px solid var(--border);
+        }
+
+        .chat-send {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .chat-send svg {
+            width: 14px;
+            height: 14px;
+            fill: #fff;
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            background: var(--teal-pale);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: center;
+            gap: 5rem;
+            animation: fadeUp 0.7s 0.5s ease both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--teal-deep);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ── SECTIONS ── */
+        section {
+            padding: 6rem 4rem;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 1rem;
+        }
+
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--ink);
+            margin-bottom: 1.2rem;
+        }
+
+        .section-sub {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 500px;
+            line-height: 1.75;
+        }
+
+        /* ── FEATURES ── */
+        .features {
+            background: var(--white);
+        }
+
+        .features-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .features-header .section-sub {
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feat-card {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 1.8rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(26, 36, 32, 0.08);
+        }
+
+        .feat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--teal-pale);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.4rem;
+        }
+
+        .feat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--teal);
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .feat-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 0.6rem;
+        }
+
+        .feat-desc {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ── HOW IT WORKS ── */
+        .how {
+            background: var(--cream);
+        }
+
+        .how-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 2.2rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.4rem;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: #fff;
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-content {}
+
+        .step-title {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--ink);
+            margin-bottom: 0.3rem;
+        }
+
+        .step-desc {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .how-visual {
+            position: relative;
+        }
+
+        .how-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            box-shadow: 0 8px 32px rgba(26, 36, 32, 0.07);
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .risk-low {
+            background: #e6f7f0;
+            color: #1d7a5a;
+        }
+
+        .risk-med {
+            background: #fff8e6;
+            color: #8a6000;
+        }
+
+        .risk-high {
+            background: #fdecea;
+            color: #a02020;
+        }
+
+        .risk-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .risk-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .risk-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.8rem;
+            background: var(--warm);
+            border-radius: var(--radius-sm);
+            color: var(--muted);
+        }
+
+        .risk-bar-track {
+            width: 80px;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .risk-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .fill-green {
+            background: var(--teal);
+            width: 75%;
+        }
+
+        .fill-amber {
+            background: #f5a623;
+            width: 45%;
+        }
+
+        .fill-red {
+            background: #e05555;
+            width: 20%;
+        }
+
+        /* ── SAFETY SECTION ── */
+        .safety {
+            background: linear-gradient(135deg, #1d4f3d 0%, #0f3328 100%);
+            color: #fff;
+        }
+
+        .safety-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .safety .section-label {
+            color: var(--teal-light);
+        }
+
+        .safety .section-heading {
+            color: #fff;
+        }
+
+        .safety .section-sub {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .safety-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            margin-top: 2rem;
+        }
+
+        .safety-feat {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 1.1rem 1.3rem;
+        }
+
+        .safety-feat-icon {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(94, 201, 160, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .safety-feat-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--teal-light);
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .safety-feat-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .safety-feat-desc {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.6;
+        }
+
+        .crisis-box {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(94, 201, 160, 0.3);
+            border-radius: var(--radius);
+            padding: 2rem 2.2rem;
+        }
+
+        .crisis-box h3 {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--teal-light);
+            margin-bottom: 0.6rem;
+        }
+
+        .crisis-box p {
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.6rem;
+            line-height: 1.7;
+        }
+
+        .crisis-resources {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .crisis-res {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem 1.1rem;
+        }
+
+        .crisis-res-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .crisis-res-number {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--teal-light);
+        }
+
+        /* ── CTA ── */
+        .cta {
+            background: var(--white);
+            text-align: center;
+            padding: 7rem 4rem;
+        }
+
+        .cta-inner {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta .section-heading {
+            margin-bottom: 1rem;
+        }
+
+        .cta .section-sub {
+            margin: 0 auto 2.5rem;
+        }
+
+        .cta-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--ink);
+            color: rgba(255, 255, 255, 0.45);
+            padding: 2.5rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: var(--teal-light);
+        }
+
+        .footer-logo {
+            font-family: var(--font-serif);
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeLeft {
+            from {
+                opacity: 0;
+                transform: translateX(32px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        @keyframes typing {
+
+            0%,
+            60% {
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 1;
+            }
+        }
+
+        .typing-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+            margin: 0 2px;
+            animation: typing 1.4s ease infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* scroll-reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <a class="nav-logo" href="#">
+            <svg width="26" height="26" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="30" fill="rgba(94,201,160,0.15)" />
+                <circle cx="32" cy="32" r="30" fill="none" stroke="#3db88a" stroke-width="2" />
+                <path d="M28 18 C20 18, 16 24, 16 30 C16 36, 20 42, 28 44 C28 42, 24 38, 24 34 C24 30, 26 26, 28 24"
+                    fill="none" stroke="#3db88a" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M36 18 C44 18, 48 24, 48 30 C48 36, 44 42, 36 44 C36 42, 40 38, 40 34 C40 30, 38 26, 36 24"
+                    fill="none" stroke="#3db88a" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M32 20 L32 50" fill="none" stroke="#3db88a" stroke-width="2" stroke-linecap="round" />
+                <path d="M32 38 C28 34, 24 36, 24 38 C24 40, 28 42, 32 38Z" fill="#3db88a" opacity="0.7" />
+                <path d="M32 32 C36 28, 40 30, 40 32 C40 34, 36 36, 32 32Z" fill="#3db88a" opacity="0.7" />
+            </svg>
+            MindCare<span class="dot">.</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#safety">Safety</a></li>
+            <a href="/login" class="btn-nav">Get started</a>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <span class="pulse"></span>
+                AI-Powered Mental Health Support
+            </div>
+            <h1>A safe space to<br><em>talk, heal,</em> and<br>feel understood.</h1>
+            <p class="hero-sub">MindCare AI listens without judgment, detects when you need urgent help, and connects
+                your trusted guardians — all in real time.</p>
+            <div class="hero-actions">
+                <a href="/login" class="btn-primary">Start chatting — it's free</a>
+                <a href="#how" class="btn-ghost">See how it works</a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="chat-card">
+                <div class="chat-header">
+                    <div class="chat-avatar">🌿</div>
+                    <div class="chat-header-info">
+                        <div class="chat-header-name">MindCare AI</div>
+                        <div class="chat-status">Always here for you</div>
+                    </div>
+                </div>
+                <div class="chat-body">
+                    <div class="msg msg-bot">
+                        Hey! 💛 Good to see you here. How are you feeling today?
+                        <div class="msg-time">Just now</div>
+                    </div>
+                    <div class="msg msg-user">
+                        Honestly, I've been really stressed and can't sleep lately.
+                        <div class="msg-time">Just now</div>
+                    </div>
+                    <div class="msg msg-bot">
+                        Sleep stress is real — when your brain won't switch off at night, everything gets harder. How
+                        long has this been going on? 🌙
+                        <div class="msg-time">Just now</div>
+                    </div>
+                    <div class="msg msg-bot" style="padding: 0.7rem 1rem; background: var(--teal-pale);">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                </div>
+                <div class="chat-input-bar">
+                    <div class="chat-input-mock">Share how you feel...</div>
+                    <div class="chat-send">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-num">3×</div>
+            <div class="stat-label">Risk detection layers</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">24/7</div>
+            <div class="stat-label">Always available</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">&lt;1s</div>
+            <div class="stat-label">Crisis alert response</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Private & secure</div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="features-inner">
+            <div class="features-header reveal">
+                <div class="section-label">Features</div>
+                <h2 class="section-heading">Built around your wellbeing</h2>
+                <p class="section-sub">Every feature was designed with one goal — to make you feel heard, safe, and
+                    supported.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feat-card reveal reveal-delay-1">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Empathetic Conversations</div>
+                    <p class="feat-desc">Context-aware responses that actually follow the thread of your emotions — not
+                        generic replies, but real empathy.</p>
+                </div>
+                <div class="feat-card reveal reveal-delay-2">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 8v4l3 3" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Real-time Risk Detection</div>
+                    <p class="feat-desc">An ML model trained on real data classifies each message as Low, Medium, or
+                        High risk — instantly, every time.</p>
+                </div>
+                <div class="feat-card reveal reveal-delay-3">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Guardian Alerts</div>
+                    <p class="feat-desc">When high-risk messages are detected, your trusted guardian gets an immediate
+                        email with crisis resources.</p>
+                </div>
+                <div class="feat-card reveal reveal-delay-1">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 11l3 3L22 4" />
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Coping Exercises</div>
+                    <p class="feat-desc">Breathing exercises, grounding techniques, and movement prompts delivered
+                        in-context based on how you're feeling.</p>
+                </div>
+                <div class="feat-card reveal reveal-delay-2">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <path d="M3 9h18M9 21V9" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Conversation History</div>
+                    <p class="feat-desc">Named chat sessions let you track your emotional journey over time and revisit
+                        past conversations.</p>
+                </div>
+                <div class="feat-card reveal reveal-delay-3">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <div class="feat-title">Privacy First</div>
+                    <p class="feat-desc">Passwords are hashed, data stays in your own database, and your conversations
+                        are never shared or sold.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how" id="how">
+        <div class="how-inner">
+            <div>
+                <div class="section-label reveal">How it works</div>
+                <h2 class="section-heading reveal">Smart support in three steps</h2>
+                <p class="section-sub reveal" style="margin-bottom:3rem;">From first message to crisis intervention —
+                    MindCare handles it seamlessly.</p>
+                <div class="steps">
+                    <div class="step reveal reveal-delay-1">
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <div class="step-title">You share how you feel</div>
+                            <p class="step-desc">Type freely — the bot adapts to your tone, detects your mood, and
+                                responds with genuine empathy.</p>
+                        </div>
+                    </div>
+                    <div class="step reveal reveal-delay-2">
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <div class="step-title">AI assesses in real time</div>
+                            <p class="step-desc">A keyword safety layer runs first, then an ML model, classifying every
+                                message as Low, Medium, or High risk.</p>
+                        </div>
+                    </div>
+                    <div class="step reveal reveal-delay-3">
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Help arrives when it's needed</div>
+                            <p class="step-desc">For high-risk messages, your guardian gets an instant email alert with
+                                crisis resources and your message context.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="how-visual reveal">
+                <div class="how-card">
+                    <div class="risk-badge risk-low"><span class="risk-dot"></span> Low risk</div>
+                    <div class="risk-list">
+                        <div class="risk-item">
+                            <span>Low risk</span>
+                            <div class="risk-bar-track">
+                                <div class="risk-bar-fill fill-green"></div>
+                            </div>
+                        </div>
+                        <div class="risk-item">
+                            <span>Medium risk</span>
+                            <div class="risk-bar-track">
+                                <div class="risk-bar-fill fill-amber"></div>
+                            </div>
+                        </div>
+                        <div class="risk-item">
+                            <span>High risk</span>
+                            <div class="risk-bar-track">
+                                <div class="risk-bar-fill fill-red"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:1.4rem; padding-top:1.2rem; border-top:1px solid var(--border);">
+                        <div
+                            style="font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;">
+                            Detection pipeline</div>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <div style="display:flex;align-items:center;gap:10px;font-size:0.83rem;color:var(--muted);">
+                                <div
+                                    style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;">
+                                </div>
+                                Keyword safety layer (instant)
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px;font-size:0.83rem;color:var(--muted);">
+                                <div
+                                    style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;">
+                                </div>
+                                ML classification model
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px;font-size:0.83rem;color:var(--muted);">
+                                <div
+                                    style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;">
+                                </div>
+                                Guardian email alert (high risk)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAFETY -->
+    <section class="safety" id="safety">
+        <div class="safety-inner">
+            <div>
+                <div class="section-label reveal">Safety & Crisis support</div>
+                <h2 class="section-heading reveal">Because some moments<br>need more than a chatbot.</h2>
+                <p class="section-sub reveal">MindCare is a supportive companion — but it knows when to escalate. Real
+                    humans, real resources, real help.</p>
+                <div class="safety-features reveal" style="margin-top:2.5rem;">
+                    <div class="safety-feat">
+                        <div class="safety-feat-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A2 2 0 0 1 4.11 2h3" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="safety-feat-title">Guardian email alerts</div>
+                            <p class="safety-feat-desc">Every high-risk message triggers an instant email to your
+                                trusted contact with the full context and crisis hotline numbers.</p>
+                        </div>
+                    </div>
+                    <div class="safety-feat">
+                        <div class="safety-feat-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="safety-feat-title">Keyword safety layer</div>
+                            <p class="safety-feat-desc">Crisis phrases trigger an immediate HIGH risk classification
+                                before any ML model runs — no delay, no missed signals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="crisis-box reveal">
+                <h3>Crisis Resources</h3>
+                <p>If you or someone you know is in immediate danger, please reach out to one of these free,
+                    confidential services.</p>
+                <div class="crisis-resources">
+                    <div class="crisis-res">
+                        <span class="crisis-res-name">Suicide & Crisis Lifeline</span>
+                        <span class="crisis-res-number">988</span>
+                    </div>
+                    <div class="crisis-res">
+                        <span class="crisis-res-name">Crisis Text Line</span>
+                        <span class="crisis-res-number">Text HOME → 741741</span>
+                    </div>
+                    <div class="crisis-res">
+                        <span class="crisis-res-name">iCall (India)</span>
+                        <span class="crisis-res-number">9152987821</span>
+                    </div>
+                    <div class="crisis-res">
+                        <span class="crisis-res-name">Vandrevala Foundation</span>
+                        <span class="crisis-res-number">1860-2662-345</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-inner">
+            <div class="section-label reveal">Get started</div>
+            <h2 class="section-heading reveal">You deserve to feel better.</h2>
+            <p class="section-sub reveal">MindCare AI is here whenever you need it. No appointments, no waitlists — just
+                an open conversation.</p>
+            <div class="cta-actions reveal">
+                <a href="/signup" class="btn-primary">Create your account</a>
+                <a href="/login" class="btn-ghost"
+                    style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:0.9rem;">Already
+                    have one? Sign in</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">MindCare AI</div>
+        <div>Built with care &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></div>
+        <div>Not a substitute for professional mental health care.</div>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

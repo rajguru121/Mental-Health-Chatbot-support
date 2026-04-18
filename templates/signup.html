@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up · MindCare AI</title>
+    <meta name="description" content="Create your MindCare AI account — a safe, private space for mental wellness.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='logo.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ── signup-specific layout ── */
+        .auth-page {
+            overflow-y: auto;
+            padding: 2.5rem 1rem;
+        }
+        .auth-card {
+            padding: 2rem 1.8rem 1.6rem;
+        }
+        .auth-header { margin-bottom: 1.2rem; }
+        .auth-header img { width: 44px !important; height: 44px !important; margin-bottom: 0.5rem !important; }
+        .auth-header h1 { font-size: 1.5rem; }
+
+        .form-group { margin-bottom: 0.7rem; }
+        .form-group label { margin-bottom: 0.25rem; font-size: 0.82rem; }
+        .form-group input { padding: 0.65rem 0.9rem; font-size: 0.9rem; }
+
+        .btn-full { margin-top: 0.4rem; padding: 0.7rem 1.5rem; }
+        .auth-footer { margin-top: 1rem; }
+
+        .field-error {
+            color: #fca5a5;
+            font-size: 0.75rem;
+            margin-top: 0.2rem;
+            min-height: 0;
+            transition: opacity 0.2s;
+        }
+        .field-error:empty { display: none; }
+
+        .pw-strength {
+            margin-top: 0.35rem;
+            display: none;
+        }
+        .pw-strength.visible { display: block; }
+        .pw-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-input);
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+        .pw-bar-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: width 0.3s, background 0.3s;
+        }
+        .pw-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .pw-strength.weak   .pw-bar-fill { width: 33%; background: #ef4444; }
+        .pw-strength.weak   .pw-label    { color: #fca5a5; }
+        .pw-strength.good   .pw-bar-fill { width: 66%; background: #f59e0b; }
+        .pw-strength.good   .pw-label    { color: #fcd34d; }
+        .pw-strength.strong .pw-bar-fill { width: 100%; background: var(--success); }
+        .pw-strength.strong .pw-label    { color: #6ee7b7; }
+
+        .password-wrapper {
+            position: relative;
+        }
+        .password-wrapper input {
+            padding-right: 2.8rem;
+        }
+        .toggle-eye {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1.05rem;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toggle-eye:hover { color: var(--text-muted); }
+    </style>
+</head>
+
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="{{ url_for('static', filename='logo.svg') }}" alt="MindCare AI" style="width:56px;height:56px;margin:0 auto 0.75rem;display:block">
+                <h1>MindCare AI</h1>
+                <p>Create your safe space</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endwith %}
+
+            <form method="POST" id="signupForm" novalidate>
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" placeholder="Choose a username" required>
+                    <div class="field-error" id="usernameErr"></div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" placeholder="you@example.com" required>
+                    <div class="field-error" id="emailErr"></div>
+                </div>
+
+                <!-- Guardian Email -->
+                <div class="form-group">
+                    <label for="guardianEmail">Guardian's Email 🛡️</label>
+                    <input id="guardianEmail" type="email" name="guardian_email" placeholder="guardian@email.com" required>
+                    <div class="field-error" id="guardianEmailErr"></div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input id="password" type="password" name="password" placeholder="Create a strong password" required>
+                        <button type="button" class="toggle-eye" id="togglePw" aria-label="Toggle password visibility">👁</button>
+                    </div>
+                    <div class="pw-strength" id="pwStrength">
+                        <div class="pw-bar"><div class="pw-bar-fill"></div></div>
+                        <span class="pw-label" id="pwLabel"></span>
+                    </div>
+                    <div class="field-error" id="passwordErr"></div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input id="confirmPassword" type="password" name="confirm_password" placeholder="Confirm your password" required>
+                        <button type="button" class="toggle-eye" id="toggleCpw" aria-label="Toggle confirm password visibility">👁</button>
+                    </div>
+                    <div class="field-error" id="confirmErr"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Create Account ✨</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ── Elements ── */
+        const form       = document.getElementById('signupForm');
+        const pw         = document.getElementById('password');
+        const cpw        = document.getElementById('confirmPassword');
+        const emailIn    = document.getElementById('email');
+        const gEmailIn   = document.getElementById('guardianEmail');
+        const usernameIn = document.getElementById('username');
+        const pwStrength = document.getElementById('pwStrength');
+        const pwLabel    = document.getElementById('pwLabel');
+
+        /* ── Toggle password visibility ── */
+        function makeToggle(btn, input) {
+            btn.addEventListener('click', () => {
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.textContent = show ? '🙈' : '👁';
+            });
+        }
+        makeToggle(document.getElementById('togglePw'), pw);
+        makeToggle(document.getElementById('toggleCpw'), cpw);
+
+        /* ── Password strength checks ── */
+        const checks = {
+            length: v => v.length >= 8,
+            upper:  v => /[A-Z]/.test(v),
+            lower:  v => /[a-z]/.test(v),
+            digit:  v => /[0-9]/.test(v),
+            symbol: v => /[!@#$%^&*()_+\-=]/.test(v),
+        };
+
+        function getStrength(v) {
+            const passed = Object.values(checks).filter(fn => fn(v)).length;
+            if (passed <= 2) return 'weak';
+            if (passed <= 4) return 'good';
+            return 'strong';
+        }
+
+        const strengthLabels = { weak: 'Weak', good: 'Good', strong: 'Strong' };
+
+        pw.addEventListener('input', () => {
+            const v = pw.value;
+            if (!v) { pwStrength.classList.remove('visible','weak','good','strong'); return; }
+            const level = getStrength(v);
+            pwStrength.className = 'pw-strength visible ' + level;
+            pwLabel.textContent = strengthLabels[level];
+        });
+
+        /* ── Email format check ── */
+        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        /* ── Client-side validation on submit ── */
+        form.addEventListener('submit', e => {
+            let valid = true;
+
+            // Username
+            if (!usernameIn.value.trim()) {
+                document.getElementById('usernameErr').textContent = 'Username is required';
+                valid = false;
+            } else {
+                document.getElementById('usernameErr').textContent = '';
+            }
+
+            // Email
+            if (!emailRe.test(emailIn.value)) {
+                document.getElementById('emailErr').textContent = 'Please enter a valid email address';
+                valid = false;
+            } else {
+                document.getElementById('emailErr').textContent = '';
+            }
+
+            // Guardian email
+            if (!emailRe.test(gEmailIn.value)) {
+                document.getElementById('guardianEmailErr').textContent = 'Please enter a valid guardian email';
+                valid = false;
+            } else {
+                document.getElementById('guardianEmailErr').textContent = '';
+            }
+
+            // Password strength
+            const allPass = Object.values(checks).every(fn => fn(pw.value));
+            if (!allPass) {
+                document.getElementById('passwordErr').textContent =
+                    'Password must be at least 8 characters and include uppercase, lowercase, number, symbol';
+                valid = false;
+            } else {
+                document.getElementById('passwordErr').textContent = '';
+            }
+
+            // Confirm match
+            if (pw.value !== cpw.value) {
+                document.getElementById('confirmErr').textContent = 'Passwords do not match';
+                valid = false;
+            } else {
+                document.getElementById('confirmErr').textContent = '';
+            }
+
+            if (!valid) e.preventDefault();
+        });
+    </script>
+</body>
+
+</html>
