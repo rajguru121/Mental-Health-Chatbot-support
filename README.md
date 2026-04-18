@@ -51,30 +51,7 @@ Login Page
 Signup Page
 Chat Interface
 Sentiment Output Display
-🏗️ Project Structure
-mental-health-chatbot/
-│
-├── dataset/
-│   └── final_mental_health_dataset.csv
-│
-├── preprocessing/
-│   └── data_preprocessing.py
-│
-├── backend/
-│   ├── model.py
-│   ├── sentiment_analysis.py
-│   ├── risk_detection.py
-│   └── email_alert.py
-│
-├── frontend/
-│   ├── login.html
-│   ├── signup.html
-│   ├── chatbot.html
-│   └── styles.css
-│
-├── app.py
-├── requirements.txt
-└── README.md
+
 ⚙️ Tech Stack
 Programming Language
 Python
