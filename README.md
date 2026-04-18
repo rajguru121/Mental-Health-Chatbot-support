@@ -80,6 +80,51 @@ pip install -r requirements.txt
 3️⃣ Run the Application
 python app.py
 
+📊 Dataset Information
+
+The model is trained on a combined mental health text dataset created by merging multiple publicly available datasets related to depression, stress, anxiety, and emotional conversations.
+
+The final dataset file:
+
+final_mental_health_dataset.csv
+Dataset Sources
+
+The dataset was created by combining data from the following sources:
+
+Sentiment140 Dataset – general sentiment labelled text
+GoEmotions Dataset (Google) – emotion labelled conversations
+Mental Health Dataset (Kaggle) – mental health related text samples
+Suicide Risk / Depression Text Dataset (Kaggle) – high-risk emotional text
+Reddit Mental Health Posts – anxiety, depression discussion data
+
+These datasets were merged and cleaned to create a single structured dataset suitable for sentiment analysis and risk prediction.
+
+🔄 Dataset Processing (Combining Step)
+
+Steps performed:
+
+Merged multiple datasets into one CSV file
+Standardized column names
+Removed duplicates
+Cleaned text (lowercase, removed special characters)
+Removed missing values
+Assigned labels:
+Sentiment: positive, neutral, negative
+Risk Level: low, medium, high
+
+Final dataset format:
+
+text, sentiment, risk_level
+⚠️ Dataset Availability
+
+The dataset size is 75MB+, so it is not uploaded to GitHub due to file size limits.
+
+To run the project, place the dataset in:
+
+dataset/final_mental_health_dataset.csv
+
+You may use similar mental health datasets with the same column format.
+
 Open in browser:
 
 http://127.0.0.1:5000
